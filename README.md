@@ -1,4 +1,4 @@
-#Histogram Sampler
+# Histogram Sampler
 
 ## Synopsis
 
