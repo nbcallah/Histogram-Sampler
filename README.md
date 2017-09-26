@@ -60,6 +60,12 @@ Compile the source in the test directory and run Test. Output should be 20 color
 
 As this is a small project, I will not actively maintain it. If you find this code, use it, and find a bug, feel free to let me know.
 
+## Sources
+
+For the test dataset, I have used play brick color data available at https://www.kaggle.com/rtatman/lego-database which was under the CC0 public domain license.
+
+I have based the algorithms on a writeup from Keith Schwarz at http://www.keithschwarz.com/darts-dice-coins/
+
 ## Authors
 
 Nathan Callahan

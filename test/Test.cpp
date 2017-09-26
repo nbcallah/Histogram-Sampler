@@ -15,7 +15,7 @@ void loadTextHistogram(histGen* &gen, std::string fName, std::vector<T> &vec, F 
 
 int main(int argc, char** argv) {
 	histGen* testGenerator; //Will store generator
-	std::vector<std::string> resultsVector; //Stores dog coat colors
+	std::vector<std::string> resultsVector; //Stores Brick colors
 	
 	auto func = [](std::string s)->std::string{return s;}; //Returns the bin as a string
 	loadTextHistogram(testGenerator, "./test_hist.csv", resultsVector, func); //Load up test_hist.csv as a histogram (vectors of bins and frequencies) and create a histGen struct.
@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
     gen.seed(sseq);
     std::uniform_int_distribution<uint64_t> randGen(0, std::numeric_limits<uint64_t>::max());
 	
-	//Sample 20 random dog coat colors
+	//Sample 20 random Brick colors
 	for(int i = 0; i < 20; i++) {
 		//Get one index
 		uint32_t index = genIndex(testGenerator, randGen(gen));
@@ -40,7 +40,7 @@ int main(int argc, char** argv) {
 		while(index == testGenerator->nEntries - 1) { //Keep providing random numbers until it works
 			index = genIndex(testGenerator, randGen(gen));
 		}
-		printf("Dog #%d: %s\n", i, resultsVector[index].c_str());
+		printf("Brick #%d: %s\n", i, resultsVector[index].c_str());
 	}
 	freeGen(testGenerator);
 	return 0;
