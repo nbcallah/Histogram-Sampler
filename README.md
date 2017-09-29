@@ -29,27 +29,32 @@ freeGen(testGenerator);
 
 ## Motivation
 
-When the underlying distribution of a dataset is unknown it is sometimes useful to sample a histogram. For example, the distribution of dog coat colors can be well-measured by compiling population statistics from shelters. However, the distribution cannot be described by any basic probability distributions. Sampling the histogram of dog coat colors can allow sample populations to be generated from a larger dataset.
+When the underlying distribution of a dataset is unknown it is sometimes useful to sample a histogram. For example, the distribution of dog coat colors can be well measured by compiling population statistics from shelters. However, the distribution cannot be described by any basic probability distributions. Sampling the histogram of dog coat colors can allow sample populations to be generated from a larger dataset.
 
-The library uses the "Alias Method" decribed at this URL: http://www.keithschwarz.com/darts-dice-coins/ but modified to use modular arithmetic and unsigned integers instead of doubles. Assuming perfect random numbers where all bits are uniformly random (may not be a good assumption), this should ensure that all samples are perfectly fair at the expense of rejecting some portion of random numbers.
+## Algorithm
 
-We want to generate samples of a histogram (probabilities as a function of bin). This means we want to randomly pick a segment of the histogram proportional to its area. One way to do this is to "stack" bin contents on top of one another so that the histogram is now a rectangle. because the histogram is now a rectangle, it can be addressed using 2 uniform variates. One indexes the bin number, and the other rolls a dice on whether to pick the original bin content or the stacked bin.
+The library uses the "Alias Method" decribed here: http://www.keithschwarz.com/darts-dice-coins/ but modified to use modular arithmetic and unsigned integers instead of doubles. Assuming perfect random numbers where all bits are uniformly random (n.b. this assumption may not be true for all psuedo random number generators), this should ensure that all samples are perfectly fair at the expense of rejecting some portion of input random numbers.
 
-Instead of using floats to index and get probabilities, split a generated 64 bit integer into 2 32 bits and use one for index and one for probability roll. Add an extra bin to re-roll probability to ensure rectangular histogram.
+Sampling a histogram can also be seen as picking a bin from the histogram proportional to its area. One way to do this is to truncate the histogram height and "stack" bin contents on top of one another so that the histogram is now a rectangle. Because the histogram is now a rectangle, it can be addressed using 2 uniform variates. One indexes the bin number, and the other rolls a dice on whether to pick the original bin content or the stacked bin.
+
+Instead of using floats to index and get probabilities, a 64 bit integer is split into 2 32 bit integers. To ensure fairness, a cutoff is used for the bin number and dice roll. The cutoff forces only an even number of modulus rollovers to occur and that there's no extra coverage for some bins or dice probabilities. Additionally, an extra bin is added to ensure the ability to make rectangular histograms. The cutoff probability is chosen such that there is extra space in the histogram: dead space for the extra bin. If the dead space is sampled, then the input random numbers are rejected.
 
 ## Installation
 
-An example program (and makefile) is provided in the test directory. The library is a single header file and a single source file.
+An example program (and makefile) is provided in the test directory. The library is a single header file and a single source file; compilation for use in other programs is left as an excercise to the reader.
 
 ## API Reference
 
-    struct histGen
+### `struct histGen`
 Contains the shape parameters of the histogram for random generation, in addition to arrays of the frequency of bins.
-    struct histGen* createGen(uint64_t* histogram, uint32_t n)
+
+### `struct histGen* createGen(uint64_t* histogram, uint32_t n)`
 Returns a struct with a populated histogram. If there are problems with generation, returns NULL. The number of bins must be less than UINT32_MAX.
-    uint32_t genIndex(struct histGen* gen, uint64_t u)
+
+### `uint32_t genIndex(struct histGen* gen, uint64_t u)`
 Returns an index from 0 to n-1. If the given uniform integer cannot generate a sample (it may be too large or it samples the dead space), then n is returned. In this case, another uniform integer must be supplied and tested again until an index < n is generated.
-    void freeGen(struct histGen* gen)
+
+### `void freeGen(struct histGen* gen)`
 Frees space used inside of histGen struct.
 
 ## Tests
