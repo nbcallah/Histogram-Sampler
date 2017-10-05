@@ -1,3 +1,5 @@
 *.[oa]
 *~
 test/Test
+src/HistGen_py.c
+build/*
